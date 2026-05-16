@@ -5,8 +5,17 @@ import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/auth/login_screen.dart';
 
+import 'package:provider/provider.dart';
+import 'providers/favorites_provider.dart';
+
 void main() {
-  runApp(const AuraApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => FavoritesProvider(),
+
+      child: const AuraApp(),
+    ),
+  );
 }
 
 class AuraApp extends StatelessWidget {
@@ -20,6 +29,7 @@ class AuraApp extends StatelessWidget {
       title: 'AURA',
 
       theme: AppTheme.lightTheme,
+
       darkTheme: AppTheme.darkTheme,
 
       themeMode: ThemeMode.system,

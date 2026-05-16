@@ -4,6 +4,9 @@ import '../../data/watch_data.dart';
 import '../../models/watch_model.dart';
 import '../details/watch_detail_screen.dart';
 
+import 'package:provider/provider.dart';
+import '../../providers/favorites_provider.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -125,12 +128,45 @@ class HomeScreen extends StatelessWidget {
                                         ),
                                       ),
 
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        color:
-                                            Theme.of(
+                                      Row(
+                                        children: [
+                                          Consumer<FavoritesProvider>(
+                                            builder: (
                                               context,
-                                            ).colorScheme.primary,
+                                              favoritesProvider,
+                                              child,
+                                            ) {
+                                              final isFavorite =
+                                                  favoritesProvider.isFavorite(
+                                                    watch,
+                                                  );
+
+                                              return IconButton(
+                                                onPressed: () {
+                                                  favoritesProvider
+                                                      .toggleFavorite(watch);
+                                                },
+
+                                                icon: Icon(
+                                                  isFavorite
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+
+                                                  color: Colors.red,
+                                                ),
+                                              );
+                                            },
+                                          ),
+
+                                          Icon(
+                                            Icons.arrow_forward_ios,
+
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
