@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
-import '../main_navigation_screen.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
@@ -20,10 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Register')),
 
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -32,13 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            Text(
-              'Welcome to AURA',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-              ),
+            const Text(
+              'Create Account',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 40),
@@ -79,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             isLoading = true;
                           });
 
-                          final error = await AuthService().login(
+                          final error = await AuthService().register(
                             email: emailController.text.trim(),
 
                             password: passwordController.text.trim(),
@@ -94,11 +86,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               context,
                             ).showSnackBar(SnackBar(content: Text(error)));
                           } else {
-                            Navigator.pushReplacement(
-                              context,
+                            Navigator.pop(context);
 
-                              MaterialPageRoute(
-                                builder: (_) => const MainNavigationScreen(),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Registration Successful'),
                               ),
                             );
                           }
@@ -107,28 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child:
                     isLoading
                         ? const CircularProgressIndicator()
-                        : const Text(
-                          'LOGIN',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        : const Text('REGISTER'),
               ),
-            ),
-
-            const SizedBox(height: 20),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-
-                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                );
-              },
-
-              child: const Text('Create New Account'),
             ),
           ],
         ),
