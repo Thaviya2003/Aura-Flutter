@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "title": "Rolex Submariner",
+    "price": 12500,
+    "description": "Luxury Swiss diving watch.",
+    "image": "assets/images/rolex.jpg"
+  },
+
+  {
+    "id": 2,
+    "title": "Omega Speedmaster",
+    "price": 9800,
+    "description": "Legendary moonwatch chronograph.",
+    "image": "assets/images/omega.jpg"
+  },
+
+  {
+    "id": 3,
+    "title": "TAG Heuer Carrera",
+    "price": 7400,
+    "description": "Elegant racing-inspired luxury watch.",
+    "image": "assets/images/tag.jpg"
+  }
+]

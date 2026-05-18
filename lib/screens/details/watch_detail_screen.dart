@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../models/watch_model.dart';
+import '../../models/api_watch_model.dart';
 
 class WatchDetailScreen extends StatelessWidget {
-  final WatchModel watch;
+  final ApiWatchModel watch;
 
   const WatchDetailScreen({super.key, required this.watch});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(watch.name)),
+      appBar: AppBar(title: Text(watch.title)),
 
       body: SingleChildScrollView(
         child: Column(
@@ -18,14 +18,40 @@ class WatchDetailScreen extends StatelessWidget {
 
           children: [
             Hero(
-              tag: watch.image,
+              tag: 'watch_${watch.id}',
 
-              child: Image.network(
-                watch.image,
-                height: 350,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child:
+                  watch.image.startsWith('http')
+                      ? Image.network(
+                        watch.image,
+
+                        height: 350,
+
+                        width: double.infinity,
+
+                        fit: BoxFit.cover,
+
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 350,
+
+                            color: Colors.grey.shade300,
+
+                            child: const Center(
+                              child: Icon(Icons.watch, size: 60),
+                            ),
+                          );
+                        },
+                      )
+                      : Image.asset(
+                        watch.image,
+
+                        height: 350,
+
+                        width: double.infinity,
+
+                        fit: BoxFit.cover,
+                      ),
             ),
 
             Padding(
@@ -36,39 +62,43 @@ class WatchDetailScreen extends StatelessWidget {
 
                 children: [
                   Text(
-                    watch.brand,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.primary,
+                    watch.title,
+
+                    style: const TextStyle(
+                      fontSize: 28,
+
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  Text(
+                    '\$${watch.price}',
+
+                    style: const TextStyle(
+                      fontSize: 24,
+
+                      color: Colors.amber,
+
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    'Description',
+
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 10),
 
                   Text(
-                    watch.name,
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Text(
-                    '\$${watch.price.toStringAsFixed(0)}',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Text(
                     watch.description,
-                    style: const TextStyle(fontSize: 16, height: 1.6),
+
+                    style: const TextStyle(fontSize: 16, height: 1.5),
                   ),
                 ],
               ),

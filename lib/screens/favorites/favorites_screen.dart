@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/favorites_provider.dart';
 import '../details/watch_detail_screen.dart';
+import '../../models/api_watch_model.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -11,7 +12,7 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
 
-    final favoriteWatches = favoritesProvider.favorites;
+    final favoriteWatches = favoritesProvider.favorites.cast<ApiWatchModel>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Favorites')),
@@ -48,9 +49,13 @@ class FavoritesScreen extends StatelessWidget {
                         ),
                       ),
 
-                      title: Text(watch.name),
+                      title: Text(watch.title),
 
-                      subtitle: Text(watch.brand),
+                      subtitle: Text(
+                        watch.description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
 
                       trailing: Text('\$${watch.price.toStringAsFixed(0)}'),
 
