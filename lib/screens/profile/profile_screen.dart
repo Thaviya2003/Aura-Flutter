@@ -5,6 +5,10 @@ import '../../providers/battery_provider.dart';
 
 import '../../providers/location_provider.dart';
 
+import 'dart:io';
+
+import '../../providers/profile_image_provider.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -21,6 +25,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context.read<BatteryProvider>().loadBatteryLevel();
 
       context.read<LocationProvider>().loadLocation();
+
+      context.read<ProfileImageProvider>().loadSavedImage();
     });
   }
 
@@ -28,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final batteryProvider = context.watch<BatteryProvider>();
     final locationProvider = context.watch<LocationProvider>();
+    final imageProvider = context.watch<ProfileImageProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -35,13 +42,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
+            CircleAvatar(
+              radius: 55,
+              backgroundImage:
+                  imageProvider.image != null
+                      ? FileImage(imageProvider.image!)
+                      : null,
+              child:
+                  imageProvider.image == null
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+            ),
 
             const SizedBox(height: 20),
 
-            const Text(
-              'AURA User',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    imageProvider.pickImageFromCamera();
+                  },
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Camera'),
+                ),
+
+                const SizedBox(width: 15),
+
+                ElevatedButton.icon(
+                  onPressed: () {
+                    imageProvider.pickImageFromGallery();
+                  },
+                  icon: const Icon(Icons.photo),
+                  label: const Text('Gallery'),
+                ),
+              ],
             ),
 
             const SizedBox(height: 30),
