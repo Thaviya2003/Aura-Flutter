@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../providers/battery_provider.dart';
 
+import '../../providers/location_provider.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -17,12 +19,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Future.microtask(() {
       context.read<BatteryProvider>().loadBatteryLevel();
+
+      context.read<LocationProvider>().loadLocation();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final batteryProvider = context.watch<BatteryProvider>();
+    final locationProvider = context.watch<LocationProvider>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -46,6 +51,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 leading: const Icon(Icons.battery_full),
                 title: const Text('Battery Level'),
                 subtitle: Text('${batteryProvider.batteryLevel}%'),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.location_on),
+                title: const Text('Current Location'),
+                subtitle: Text(
+                  locationProvider.position == null
+                      ? 'Loading...'
+                      : locationProvider.position == null
+                      ? 'Location unavailable'
+                      : 'Lat: ${locationProvider.position!.latitude.toStringAsFixed(4)}\n'
+                          'Lng: ${locationProvider.position!.longitude.toStringAsFixed(4)}',
+                ),
               ),
             ),
           ],

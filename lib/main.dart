@@ -13,6 +13,7 @@ import 'firebase_options.dart';
 
 import 'providers/connectivity_provider.dart';
 import 'providers/battery_provider.dart';
+import 'providers/location_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
 
         ChangeNotifierProvider(create: (_) => BatteryProvider()),
+
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
 
       child: const AuraApp(),
