@@ -22,41 +22,80 @@ Future<File> saveImagePermanently(String imagePath) async {
 class ProfileImageProvider extends ChangeNotifier {
   File? _image;
 
+  String? _errorMessage;
+
+  bool _isLoading = false;
+
+  String? get errorMessage => _errorMessage;
+
+  bool get isLoading => _isLoading;
+
   File? get image => _image;
 
   final ImagePicker _picker = ImagePicker();
 
   Future<void> pickImageFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    _isLoading = true;
 
-    if (pickedFile != null) {
-      await deleteOldImage();
-      final savedImage = await saveImagePermanently(pickedFile.path);
+    _errorMessage = null;
 
-      _image = savedImage;
+    notifyListeners();
 
-      final prefs = await SharedPreferences.getInstance();
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
-      await prefs.setString('profile_image', savedImage.path);
+      if (pickedFile == null) {
+        _errorMessage = 'No image selected';
+      } else {
+        await deleteOldImage();
 
-      notifyListeners();
+        final savedImage = await saveImagePermanently(pickedFile.path);
+
+        _image = savedImage;
+
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString('profile_image', savedImage.path);
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to access gallery';
     }
+
+    _isLoading = false;
+
+    notifyListeners();
   }
 
   Future<void> pickImageFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    _isLoading = true;
 
-    if (pickedFile != null) {
-      await deleteOldImage();
-      final savedImage = await saveImagePermanently(pickedFile.path);
+    _errorMessage = null;
 
-      _image = savedImage;
+    notifyListeners();
 
-      final prefs = await SharedPreferences.getInstance();
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
-      await prefs.setString('profile_image', savedImage.path);
-      notifyListeners();
+      if (pickedFile == null) {
+        _errorMessage = 'Camera operation cancelled';
+      } else {
+        await deleteOldImage();
+
+        final savedImage = await saveImagePermanently(pickedFile.path);
+
+        _image = savedImage;
+
+        final prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString('profile_image', savedImage.path);
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to access camera';
     }
+
+    _isLoading = false;
+
+    notifyListeners();
   }
 
   Future<void> loadSavedImage() async {

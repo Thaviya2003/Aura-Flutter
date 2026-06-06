@@ -96,6 +96,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 30),
 
+            if (imageProvider.errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  imageProvider.errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+
             Text(
               currentUser?.displayName ?? 'AURA User',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -124,11 +133,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ListTile(
                 leading: const Icon(Icons.location_on),
                 title: const Text('Current Location'),
-                subtitle: Text(
-                  locationProvider.position == null
-                      ? 'Loading location...'
-                      : 'Lat: ${locationProvider.position!.latitude.toStringAsFixed(4)}\n'
-                          'Lng: ${locationProvider.position!.longitude.toStringAsFixed(4)}',
+
+                subtitle: Builder(
+                  builder: (_) {
+                    if (locationProvider.isLoading) {
+                      return const Text('Getting location...');
+                    }
+
+                    if (locationProvider.errorMessage != null) {
+                      return Text(locationProvider.errorMessage!);
+                    }
+
+                    if (locationProvider.position == null) {
+                      return const Text('Location unavailable');
+                    }
+
+                    return Text(
+                      'Lat: ${locationProvider.position!.latitude.toStringAsFixed(4)}\n'
+                      'Lng: ${locationProvider.position!.longitude.toStringAsFixed(4)}',
+                    );
+                  },
                 ),
               ),
             ),

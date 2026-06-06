@@ -8,10 +8,35 @@ class LocationProvider extends ChangeNotifier {
 
   Position? _position;
 
+  bool _isLoading = false;
+
+  String? _errorMessage;
+
   Position? get position => _position;
 
+  bool get isLoading => _isLoading;
+
+  String? get errorMessage => _errorMessage;
+
   Future<void> loadLocation() async {
-    _position = await _locationService.getCurrentLocation();
+    _isLoading = true;
+
+    _errorMessage = null;
+
+    notifyListeners();
+
+    try {
+      _position = await _locationService.getCurrentLocation();
+
+      if (_position == null) {
+        _errorMessage = 'Location unavailable or permission denied';
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to get location';
+    }
+
+    _isLoading = false;
+
     notifyListeners();
   }
 }
