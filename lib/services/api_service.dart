@@ -10,7 +10,7 @@ class ApiService {
     try {
       if (isOnline) {
         final response = await http.get(
-          Uri.parse('https://fakestoreapi.com/products/category/jewelery'),
+          Uri.parse('https://thaviya2003.github.io/watchesjson/watches.json'),
         );
 
         if (response.statusCode == 200) {
