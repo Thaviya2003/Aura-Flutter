@@ -82,7 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             final allWatches = snapshot.data!;
 
-            final watches =
+            // SEARCH FILTER
+            List<ApiWatchModel> filteredWatches =
                 _searchQuery.isEmpty
                     ? allWatches
                     : allWatches.where((watch) {
@@ -91,6 +92,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             _searchQuery,
                           );
                     }).toList();
+
+            // CATEGORY FILTER
+            if (_currentTabIndex == 1) {
+              // Luxury
+              filteredWatches =
+                  filteredWatches.where((watch) {
+                    return watch.price >= 500;
+                  }).toList();
+            } else if (_currentTabIndex == 2) {
+              // Trending
+              filteredWatches =
+                  filteredWatches.where((watch) {
+                    return watch.id % 2 == 0;
+                  }).toList();
+            } else if (_currentTabIndex == 3) {
+              // Sport
+              filteredWatches =
+                  filteredWatches.where((watch) {
+                    return watch.title.toLowerCase().contains('sport') ||
+                        watch.description.toLowerCase().contains('sport');
+                  }).toList();
+            } else if (_currentTabIndex == 4) {
+              // Classic
+              filteredWatches =
+                  filteredWatches.where((watch) {
+                    return watch.title.toLowerCase().contains('classic') ||
+                        watch.description.toLowerCase().contains('classic');
+                  }).toList();
+            }
+
+            final watches = filteredWatches;
 
             return RefreshIndicator(
               color: primaryGold,
