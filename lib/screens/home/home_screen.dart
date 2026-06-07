@@ -6,7 +6,6 @@ import '../../models/api_watch_model.dart';
 import '../../providers/connectivity_provider.dart';
 import '../../services/api_service.dart';
 import '../details/watch_detail_screen.dart';
-import '../../providers/favorites_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,6 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             final watches = snapshot.data!;
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              favoritesProvider.loadFavorites(watches);
+            });
 
             return RefreshIndicator(
               color: primaryGold,
@@ -470,10 +473,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
 
-                                        onPressed: () {
-                                          favoritesProvider.toggleFavorite(
-                                            watch,
-                                          );
+                                        onPressed: () async {
+                                          await favoritesProvider
+                                              .toggleFavorite(watch);
                                         },
 
                                         icon: Icon(
