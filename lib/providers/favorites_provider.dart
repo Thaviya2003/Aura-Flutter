@@ -6,6 +6,8 @@ import '../models/api_watch_model.dart';
 class FavoritesProvider extends ChangeNotifier {
   final List<ApiWatchModel> _favorites = [];
 
+  bool _loaded = false;
+
   List<ApiWatchModel> get favorites => _favorites;
 
   bool isFavorite(ApiWatchModel watch) {
@@ -13,6 +15,8 @@ class FavoritesProvider extends ChangeNotifier {
   }
 
   Future<void> loadFavorites(List<ApiWatchModel> allWatches) async {
+    if (_loaded) return;
+
     final prefs = await SharedPreferences.getInstance();
 
     final savedIds = prefs.getStringList('favorite_ids') ?? [];
@@ -24,6 +28,8 @@ class FavoritesProvider extends ChangeNotifier {
         _favorites.add(watch);
       }
     }
+
+    _loaded = true;
 
     notifyListeners();
   }

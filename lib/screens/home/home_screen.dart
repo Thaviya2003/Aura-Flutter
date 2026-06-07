@@ -21,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final Color primaryGold = const Color(0xFFE5A922);
   int _currentTabIndex = 0;
 
+  String _searchQuery = '';
+
   // Category Tab Options
   final List<String> _categories = [
     'All',
@@ -78,11 +80,17 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
 
-            final watches = snapshot.data!;
+            final allWatches = snapshot.data!;
 
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              favoritesProvider.loadFavorites(watches);
-            });
+            final watches =
+                _searchQuery.isEmpty
+                    ? allWatches
+                    : allWatches.where((watch) {
+                      return watch.title.toLowerCase().contains(_searchQuery) ||
+                          watch.description.toLowerCase().contains(
+                            _searchQuery,
+                          );
+                    }).toList();
 
             return RefreshIndicator(
               color: primaryGold,
@@ -160,6 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // 3. Modernized Structural Search Bar
                       TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value.toLowerCase();
+                          });
+                        },
+
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                         ),
@@ -331,176 +345,217 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 24),
 
                       // 7. Watch Details Dynamic Grid Cards Section
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: watches.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                              childAspectRatio: 0.64,
-                            ),
-                        itemBuilder: (context, index) {
-                          final watch = watches[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (_) => WatchDetailScreen(watch: watch),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color:
-                                    isDark
-                                        ? Colors.grey[850]
-                                        : Colors.grey[500]!.withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(
-                                  color:
-                                      isDark
-                                          ? Colors.grey[800]!
-                                          : Colors.grey[200]!,
-                                  width: 1,
-                                ),
-                              ),
-                              padding: const EdgeInsets.all(12),
+                      // 7. Watch Details Dynamic Grid Cards Section
+                      watches.isEmpty
+                          ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 40),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Watch Card Image Render Box with Native Preserved Validation Flags
-                                  Expanded(
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            isDark
-                                                ? Colors.grey[900]
-                                                : Colors.white,
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: Hero(
-                                        tag: 'watch_${watch.id}',
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                          child:
-                                              watch.image.startsWith('http')
-                                                  ? Image.network(
-                                                    watch.image,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) {
-                                                      return Container(
-                                                        color:
-                                                            Colors
-                                                                .grey
-                                                                .shade300,
-                                                        child: const Center(
-                                                          child: Icon(
-                                                            Icons.watch,
-                                                            size: 40,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  )
-                                                  : Image.asset(
-                                                    watch.image,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                        ),
-                                      ),
-                                    ),
+                                  Icon(
+                                    Icons.search_off,
+                                    size: 80,
+                                    color: Colors.grey.shade400,
                                   ),
-                                  const SizedBox(height: 12),
 
-                                  // Dynamic Watch Title Text
-                                  Text(
-                                    watch.title,
+                                  const SizedBox(height: 16),
+
+                                  const Text(
+                                    'No Watches Found',
                                     style: TextStyle(
-                                      color:
-                                          isDark
-                                              ? Colors.white
-                                              : Colors.black87,
+                                      fontSize: 22,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 4),
 
-                                  // Dynamic Watch Description Text
-                                  Text(
-                                    watch.description,
-                                    style: TextStyle(
-                                      color:
-                                          isDark
-                                              ? Colors.white54
-                                              : Colors.grey[600],
-                                      fontSize: 11,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
                                   const SizedBox(height: 8),
 
-                                  // Dynamic Price Rendering Container Info
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '\$${watch.price}',
-                                        style: TextStyle(
-                                          color: primaryGold,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
-
-                                        onPressed: () async {
-                                          await favoritesProvider
-                                              .toggleFavorite(watch);
-                                        },
-
-                                        icon: Icon(
-                                          favoritesProvider.isFavorite(watch)
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-
-                                          color:
-                                              favoritesProvider.isFavorite(
-                                                    watch,
-                                                  )
-                                                  ? Colors.red
-                                                  : primaryGold,
-
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ],
+                                  const Text(
+                                    'Try a different search term.',
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          )
+                          : GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: watches.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                  childAspectRatio: 0.64,
+                                ),
+                            itemBuilder: (context, index) {
+                              final watch = watches[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) =>
+                                              WatchDetailScreen(watch: watch),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isDark
+                                            ? Colors.grey[850]
+                                            : Colors.grey[500]!.withOpacity(
+                                              0.05,
+                                            ),
+                                    borderRadius: BorderRadius.circular(18),
+                                    border: Border.all(
+                                      color:
+                                          isDark
+                                              ? Colors.grey[800]!
+                                              : Colors.grey[200]!,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Watch Card Image Render Box with Native Preserved Validation Flags
+                                      Expanded(
+                                        child: Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isDark
+                                                    ? Colors.grey[900]
+                                                    : Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              14,
+                                            ),
+                                          ),
+                                          child: Hero(
+                                            tag: 'watch_${watch.id}',
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                              child:
+                                                  watch.image.startsWith('http')
+                                                      ? Image.network(
+                                                        watch.image,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Container(
+                                                            color:
+                                                                Colors
+                                                                    .grey
+                                                                    .shade300,
+                                                            child: const Center(
+                                                              child: Icon(
+                                                                Icons.watch,
+                                                                size: 40,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      )
+                                                      : Image.asset(
+                                                        watch.image,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+
+                                      // Dynamic Watch Title Text
+                                      Text(
+                                        watch.title,
+                                        style: TextStyle(
+                                          color:
+                                              isDark
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+
+                                      // Dynamic Watch Description Text
+                                      Text(
+                                        watch.description,
+                                        style: TextStyle(
+                                          color:
+                                              isDark
+                                                  ? Colors.white54
+                                                  : Colors.grey[600],
+                                          fontSize: 11,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 8),
+
+                                      // Dynamic Price Rendering Container Info
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '\$${watch.price.toStringAsFixed(2)}',
+                                            style: TextStyle(
+                                              color: primaryGold,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+
+                                            onPressed: () async {
+                                              await favoritesProvider
+                                                  .toggleFavorite(watch);
+                                            },
+
+                                            icon: Icon(
+                                              favoritesProvider.isFavorite(
+                                                    watch,
+                                                  )
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+
+                                              color:
+                                                  favoritesProvider.isFavorite(
+                                                        watch,
+                                                      )
+                                                      ? Colors.red
+                                                      : primaryGold,
+
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                       const SizedBox(height: 24),
                     ],
                   ),
