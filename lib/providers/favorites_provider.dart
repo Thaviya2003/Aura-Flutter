@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../models/watch_model.dart';
+import '../models/api_watch_model.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  final List<WatchModel> _favorites = [];
+  final List<ApiWatchModel> _favorites = [];
 
-  List<WatchModel> get favorites => _favorites;
+  List<ApiWatchModel> get favorites => _favorites;
 
-  bool isFavorite(WatchModel watch) {
-    return _favorites.contains(watch);
+  bool isFavorite(ApiWatchModel watch) {
+    return _favorites.any((item) => item.id == watch.id);
   }
 
-  void toggleFavorite(WatchModel watch) {
-    if (_favorites.contains(watch)) {
-      _favorites.remove(watch);
+  void toggleFavorite(ApiWatchModel watch) {
+    if (isFavorite(watch)) {
+      _favorites.removeWhere((item) => item.id == watch.id);
     } else {
       _favorites.add(watch);
     }

@@ -19,8 +19,30 @@ class FavoritesScreen extends StatelessWidget {
 
       body:
           favoriteWatches.isEmpty
-              ? const Center(
-                child: Text('No favorites yet', style: TextStyle(fontSize: 20)),
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.favorite_border, size: 80, color: Colors.grey),
+
+                    SizedBox(height: 16),
+
+                    Text(
+                      'No Favorites Yet',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 8),
+
+                    Text(
+                      'Tap the heart icon on a watch to save it.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               )
               : ListView.builder(
                 padding: const EdgeInsets.all(16),

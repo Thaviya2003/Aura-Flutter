@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/favorites_provider.dart';
 
 import '../../models/api_watch_model.dart';
 import '../../providers/connectivity_provider.dart';
 import '../../services/api_service.dart';
 import '../details/watch_detail_screen.dart';
+import '../../providers/favorites_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final connectivityProvider = Provider.of<ConnectivityProvider>(context);
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
     watchesFuture = ApiService().fetchWatches(
       isOnline: connectivityProvider.isOnline,
     );
@@ -41,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final connectivityProvider = Provider.of<ConnectivityProvider>(context);
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -462,10 +466,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      Icon(
-                                        Icons.add_circle,
-                                        color: primaryGold,
-                                        size: 22,
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+
+                                        onPressed: () {
+                                          favoritesProvider.toggleFavorite(
+                                            watch,
+                                          );
+                                        },
+
+                                        icon: Icon(
+                                          favoritesProvider.isFavorite(watch)
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+
+                                          color:
+                                              favoritesProvider.isFavorite(
+                                                    watch,
+                                                  )
+                                                  ? Colors.red
+                                                  : primaryGold,
+
+                                          size: 24,
+                                        ),
                                       ),
                                     ],
                                   ),
