@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/api_watch_model.dart';
+import '../../providers/cart_provider.dart';
 
 class WatchDetailScreen extends StatelessWidget {
   final ApiWatchModel watch;
@@ -84,7 +86,7 @@ class WatchDetailScreen extends StatelessWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 16.0),
-          child: _buildAddToCartButton(),
+          child: _buildAddToCartButton(context),
         ),
       ),
     );
@@ -163,7 +165,7 @@ class WatchDetailScreen extends StatelessWidget {
                       ),
                       child: SizedBox(
                         width: double.infinity,
-                        child: _buildAddToCartButton(),
+                        child: _buildAddToCartButton(context),
                       ),
                     ),
                   ],
@@ -265,10 +267,17 @@ class WatchDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddToCartButton() {
+  Widget _buildAddToCartButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // TODO: Implement Add to Cart functionality
+        context.read<CartProvider>().addToCart(watch);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Added to cart'),
+            duration: Duration(seconds: 1),
+          ),
+        );
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.amber,

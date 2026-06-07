@@ -1,3 +1,4 @@
+import 'package:aura/screens/cart/cart_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'explore/explore_screen.dart';
@@ -20,6 +21,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ExploreScreen(),
     FavoritesScreen(),
     ProfileScreen(),
+    CartScreen(),
   ];
 
   @override
@@ -59,6 +61,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
             label: 'Profile',
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Icon(Icons.shopping_cart),
+            label: 'Cart',
           ),
         ],
       ),

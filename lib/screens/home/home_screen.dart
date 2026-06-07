@@ -377,7 +377,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 24),
 
                       // 7. Watch Details Dynamic Grid Cards Section
-                      // 7. Watch Details Dynamic Grid Cards Section
                       watches.isEmpty
                           ? Center(
                             child: Padding(
