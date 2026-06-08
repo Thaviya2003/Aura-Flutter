@@ -38,7 +38,7 @@ class WatchDetailScreen extends StatelessWidget {
         children: [
           // Top Half Hero Image
           Expanded(
-            flex: 4,
+            flex: 6,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -68,7 +68,7 @@ class WatchDetailScreen extends StatelessWidget {
 
           // Bottom Half Details
           Expanded(
-            flex: 5,
+            flex: 4,
             child: Container(
               width: double.infinity,
               color: theme.scaffoldBackgroundColor,

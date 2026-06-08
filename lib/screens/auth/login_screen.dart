@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
-  // Gold color scheme from the reference image
+  // Gold color scheme
   final Color primaryGold = const Color(0xFFE5A922);
 
   @override
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 60),
 
-                // Top Logo Area (Replaced text header with the abstract geometric asset placeholder)
+                // Top Logo Area
                 Icon(Icons.spa_outlined, size: 110, color: primaryGold),
 
                 const SizedBox(height: 80),
